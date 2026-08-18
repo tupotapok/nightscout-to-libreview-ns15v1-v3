@@ -1,0 +1,30 @@
+name: Nightscout to LibreView
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # Запуск каждые 15 минут
+  workflow_dispatch: # Позволяет запустить вручную кнопкой
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run upload script
+        run: npm start
+        env:
+          # Передаем наши безопасные секреты в скрипт как переменные окружения
+          NIGHTSCOUT_URL: ${{ secrets.NS_URL }}
+          NIGHTSCOUT_TOKEN: ${{ secrets.NS_TOKEN }}
+          LIBREVIEW_EMAIL: ${{ secrets.LV_EMAIL }}
+          LIBREVIEW_PASSWORD: ${{ secrets.LV_PASS }}
